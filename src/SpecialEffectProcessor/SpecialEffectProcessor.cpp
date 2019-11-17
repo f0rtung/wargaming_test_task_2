@@ -1,30 +1,10 @@
 #include <algorithm>
-#include <iostream>
 
 #include "SpecialEffectProcessor.h"
 #include "../Point/Point.h"
 #include "../../test.h"
 
 namespace {
-
-	Point make_random_point(std::uint32_t coordinate_x, std::uint32_t coordinate_y)
-	{
-		const MoveDirection move_direction{ rand_move_direction() };
-		std::uint32_t side_border{ 0 };
-		if (MoveDirection::right == move_direction) {
-			side_border = test::SCREEN_WIDTH;
-		}
-
-		return Point(
-			coordinate_x,
-			coordinate_y,
-			Color{ 255, 255, 255, 1 },
-			rand_speed(),
-			move_direction,
-			side_border,
-			0
-		);
-	}
 
 	void copy(const SpecialEffectProcessor::SpecialEffects& src,
 		      SpecialEffectProcessor::SpecialEffects& dst)
@@ -57,7 +37,7 @@ void SpecialEffectProcessor::runProcessing()
 	{
 		std::unique_lock<std::mutex> _{ raw_points_guard_ };
 		raw_points_cv_.wait(_, [this]() { return !new_raw_points_.empty(); });
-		cache_raw_points_.swap(new_raw_points_); // here cache_raw_points_ is empty
+		cache_raw_points_.swap(new_raw_points_);
 	}
 
 	createNewSpecialEffectsFromRawPoints();
@@ -82,11 +62,8 @@ void SpecialEffectProcessor::runProcessing()
 		}
 
 		if (isSpecialEffectsReady()) {
-			std::cout << "sleep!" << std::endl;
 			std::unique_lock<std::mutex> _{ ready_special_effects_guard_ };
 			ready_special_effects_cv_.wait(_, [this]() { return !isSpecialEffectsReady(); });
-		} else {
-			std::cout << "not sleep!" << std::endl;
 		}
 
 		copy(second_line_special_effects_, first_line_special_effects_);
@@ -108,24 +85,17 @@ void SpecialEffectProcessor::addRawPoint(RawPoint point)
 
 const SpecialEffectProcessor::SpecialEffects& SpecialEffectProcessor::getSpecialEffects()
 {
+	if (isSpecialEffectsReady()) {
+		ready_special_effects_.swap(first_line_special_effects_);
+		is_special_effects_ready_ = false;
+		ready_special_effects_cv_.notify_one();
+	}
 	return ready_special_effects_;
-}
-
-std::size_t SpecialEffectProcessor::SpecialEffectsCount() const noexcept
-{
-	return special_effects_count_;
 }
 
 bool SpecialEffectProcessor::isSpecialEffectsReady() const noexcept
 {
 	return is_special_effects_ready_;
-}
-
-void SpecialEffectProcessor::resetSpecialEffectsReadyState()
-{
-	ready_special_effects_.swap(first_line_special_effects_);
-	is_special_effects_ready_ = false;
-	ready_special_effects_cv_.notify_one();
 }
 
 void SpecialEffectProcessor::setSpecialEffectsReadyState()

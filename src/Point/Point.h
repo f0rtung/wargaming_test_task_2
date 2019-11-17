@@ -30,6 +30,10 @@ enum class MoveDirection
 
 MoveDirection rand_move_direction();
 
+class Point;
+
+Point make_random_point(std::uint32_t coordinate_x, std::uint32_t coordinate_y);
+
 class Point {
 public:
 	Point(std::uint32_t coordinate_x,

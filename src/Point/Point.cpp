@@ -37,6 +37,25 @@ MoveDirection rand_move_direction()
 	return rand_enum_value<MoveDirection>();
 }
 
+Point make_random_point(std::uint32_t coordinate_x, std::uint32_t coordinate_y)
+{
+	const MoveDirection move_direction{ rand_move_direction() };
+	std::uint32_t side_border{ 0 };
+	if (MoveDirection::right == move_direction) {
+		side_border = test::SCREEN_WIDTH;
+	}
+
+	return Point(
+		coordinate_x,
+		coordinate_y,
+		Color{ 255, 255, 255, 1 },
+		rand_speed(),
+		move_direction,
+		side_border,
+		0
+	);
+}
+
 Point::Point(std::uint32_t coordinate_x,
 	         std::uint32_t coordinate_y,
 			 Color color,

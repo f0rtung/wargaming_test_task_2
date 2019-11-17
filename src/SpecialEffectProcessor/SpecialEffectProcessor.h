@@ -32,11 +32,9 @@ public:
 	void runProcessing();
 	void addRawPoint(RawPoint point);
 	const SpecialEffects& getSpecialEffects();
-	std::size_t SpecialEffectsCount() const noexcept;
-	bool isSpecialEffectsReady() const noexcept;
-	void resetSpecialEffectsReadyState();
 
 private:
+	bool isSpecialEffectsReady() const noexcept;
 	void setSpecialEffectsReadyState();
 	void removeSpecialEffectsIf(const RemoveSpecialEffectsConditionCb& cb);
 	void removeNotMoveableSpecialEffects();
@@ -46,7 +44,7 @@ private:
 	bool isPossibleCreateNewSpecialEffects();
 
 private:
-	std::atomic_size_t special_effects_count_;
+	std::size_t special_effects_count_;
 	std::atomic_bool is_special_effects_ready_;
 	SpecialEffects first_line_special_effects_;
 	SpecialEffects second_line_special_effects_;

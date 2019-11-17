@@ -32,10 +32,6 @@ void test::update(int dt)
 
 void test::render(void)
 {
-	if (se_processor.isSpecialEffectsReady()) {
-		se_processor.resetSpecialEffectsReadyState();
-	}
-
 	for (const auto& special_effect : se_processor.getSpecialEffects()) {
 		special_effect.draw();
 	}
