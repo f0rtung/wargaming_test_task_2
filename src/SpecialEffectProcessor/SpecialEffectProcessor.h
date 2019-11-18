@@ -44,7 +44,7 @@ private:
     bool isPossibleCreateNewSpecialEffects();
 
 private:
-    std::size_t special_effects_count_;
+    std::atomic_size_t special_effects_count_;
     std::atomic_bool is_special_effects_ready_;
     SpecialEffects first_line_special_effects_;
     SpecialEffects second_line_special_effects_;
